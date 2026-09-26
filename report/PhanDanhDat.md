@@ -8,7 +8,7 @@
 | MSSV | 2A202602627 |
 | Khóa/Lớp | K4 - L3B (Ca Sáng - Thứ 7, 26/09/2026) |
 | Tên nhóm | Czpl |
-| Vai trò chính | Trưởng nhóm / Pipeline Integrator (`core/`, `phase1.py`, `corruption_flow.py`, `self_healing.py`) |
+| Vai trò chính | Trưởng nhóm |
 | Repository | K4-L3B-Day10-Czpl-Data-Pipeline-Data-Observability |
 | Ngày hoàn thành | 2026-09-26 |
 
