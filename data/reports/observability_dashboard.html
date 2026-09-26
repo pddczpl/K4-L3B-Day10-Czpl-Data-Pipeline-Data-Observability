@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Observability & Quality Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+        }
+        .header {
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 24px; color: var(--primary); }
+        .header .badge {
+            padding: 6px 12px;
+            border-radius: 9999px;
+            background: #065f46;
+            color: #34d399;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        .card-title { font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .card-value { font-size: 28px; font-weight: 700; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-primary { color: var(--primary); }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        .table-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--text-muted); font-size: 13px; }
+        .state-pass { color: var(--success); font-weight: bold; }
+        .state-fail { color: var(--danger); font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>DATA OBSERVABILITY & OBSERVABILITY DASHBOARD</h1>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Day 10 — RAG Pipeline Quality Gate & Drift Monitor</p>
+        </div>
+        <div class="badge">Pipeline Status: HEALTHY</div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">Retrieval Hit Rate (Baseline)</div>
+            <div class="card-value text-success">100.0%</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Hit Rate During Corruption</div>
+            <div class="card-value text-danger">50.0%</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Hit Rate After Repair</div>
+            <div class="card-value text-success">100.0%</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Freshness SLA Status</div>
+            <div class="card-value text-primary">PASS (100% Fresh)</div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3 style="margin-bottom: 16px; font-size: 16px;">3-State Performance Comparison</h3>
+            <canvas id="comparisonChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3 style="margin-bottom: 16px; font-size: 16px;">Paper Age Distribution (Days)</h3>
+            <canvas id="ageChart"></canvas>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <h3 style="margin-bottom: 16px; font-size: 16px;">Comprehensive 3-State Metric Breakdown</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric / Check</th>
+                    <th>Baseline</th>
+                    <th>Corrupted</th>
+                    <th>Repaired</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Retrieval Hit Rate</td>
+                    <td>1.0000</td>
+                    <td class="state-fail">0.5000</td>
+                    <td class="state-pass">1.0000</td>
+                    <td class="state-pass">100% Recovered</td>
+                </tr>
+                <tr>
+                    <td>Mean Token F1</td>
+                    <td>0.5754</td>
+                    <td class="state-fail">0.3306</td>
+                    <td class="state-pass">0.5754</td>
+                    <td class="state-pass">100% Recovered</td>
+                </tr>
+                <tr>
+                    <td>Judge Accuracy</td>
+                    <td>0.5000</td>
+                    <td class="state-fail">0.3000</td>
+                    <td class="state-pass">0.5000</td>
+                    <td class="state-pass">100% Recovered</td>
+                </tr>
+                <tr>
+                    <td>Mean Judge Score</td>
+                    <td>3.20 / 5.0</td>
+                    <td class="state-fail">2.30 / 5.0</td>
+                    <td class="state-pass">3.20 / 5.0</td>
+                    <td class="state-pass">100% Recovered</td>
+                </tr>
+                <tr>
+                    <td>Great Expectations 1.x Gate</td>
+                    <td class="state-pass">PASS</td>
+                    <td class="state-fail">FAIL (Detected)</td>
+                    <td class="state-pass">PASS</td>
+                    <td class="state-pass">Protected</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Comparison Chart
+        const compCtx = document.getElementById('comparisonChart').getContext('2d');
+        new Chart(compCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Hit Rate', 'Token F1', 'Judge Acc', 'Judge Score (/5)'],
+                datasets: [
+                    {
+                        label: 'Baseline',
+                        data: [
+                            1.0,
+                            0.5753684040534539,
+                            0.5,
+                            3.2 / 5.0
+                        ],
+                        backgroundColor: '#38bdf8'
+                    },
+                    {
+                        label: 'Corrupted',
+                        data: [
+                            0.5,
+                            0.3305848413322843,
+                            0.3,
+                            2.3 / 5.0
+                        ],
+                        backgroundColor: '#ef4444'
+                    },
+                    {
+                        label: 'Repaired',
+                        data: [
+                            1.0,
+                            0.5753684040534539,
+                            0.5,
+                            3.2 / 5.0
+                        ],
+                        backgroundColor: '#22c55e'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, max: 1.0 }
+                }
+            }
+        });
+
+        // Age Chart
+        const ageCtx = document.getElementById('ageChart').getContext('2d');
+        new Chart(ageCtx, {
+            type: 'line',
+            data: {
+                labels: ["Doc 1", "Doc 2", "Doc 3", "Doc 4", "Doc 5", "Doc 6", "Doc 7", "Doc 8", "Doc 9", "Doc 10", "Doc 11", "Doc 12", "Doc 13", "Doc 14", "Doc 15", "Doc 16", "Doc 17", "Doc 18", "Doc 19", "Doc 20", "Doc 21", "Doc 22", "Doc 23", "Doc 24"],
+                datasets: [{
+                    label: 'Age in Days',
+                    data: [11, 13, 14, 18, 22, 30, 31, 31, 32, 43, 56, 75, 78, 85, 86, 87, 88, 103, 103, 117, 143, 148, 173, 178],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Days from Today' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
